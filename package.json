@@ -1,0 +1,16 @@
+{
+  "name": "my-promise-test",
+  "version": "1.0.0",
+  "description": "1.测试集 https://github.com/promises-aplus/promises-tests/",
+  "main": "index.js",
+  "scripts": {
+    "test": "promises-aplus-tests test.js",
+    "test:local": "mocha testLocal.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "mocha": "^8.3.2",
+    "promises-aplus-tests": "^2.1.2"
+  }
+}
