@@ -14,7 +14,6 @@ const utils = {
 const resolveByResult = (promise, x, resolve, reject) => {
   let called = false;
   try {
-    // If promise and x refer to the same object, reject promise with a TypeError as the reason.
     if (x === promise) {
       reject(new TypeError('Chaining cycle detected for promise!'));
     }
@@ -66,31 +65,22 @@ class PromiseNew {
     this.resolveQueue = [];
     this.rejectQueue = [];
     const resolve = (value) => {
-      // When fulfilled or rejected must not transition to any other state.
       if (this.state !== STATE.PENDING) return;
       this.state = STATE.FULFILLED;
-      // must have a value, which must not change.
       this.value = value;
-      // execute asynchronously
       setTimeout(() => {
-        // onFulfilled and onRejected must be called as functions (i.e. with no this value).
         this.resolveQueue.forEach((fn) => fn(value));
       }, 0);
     }
     const reject = (reason) => {
-      // When fulfilled or rejected must not transition to any other state.
       if (this.state !== STATE.PENDING) return;
       this.state = STATE.REJECTED;
-      // must have a reason, which must not change.
       this.reason = reason;
-      // execute asynchronously
       setTimeout(() => {
-        // onFulfilled and onRejected must be called as functions (i.e. with no this value).
         this.rejectQueue.forEach((fn) => fn(reason));
       }, 0);
     }
     try {
-      // onFulfilled and onRejected must be called as functions (i.e. with no this value).
       fn(resolve, reject);
     } catch (e) {
       reject(e);
@@ -98,8 +88,6 @@ class PromiseNew {
   }
 
   then(onFulfilled, onRejected) {
-    // If onFulfilled or onRejected is not a function, it must be ignored
-    // and pass the value or reason
     onFulfilled = utils.isFunction(onFulfilled) ? onFulfilled : function (value) { return value }
     onRejected = utils.isFunction(onRejected) ? onRejected : function (reason) { throw reason }
 
@@ -113,7 +101,6 @@ class PromiseNew {
       });
     } else {
       return newPromise = new PromiseNew((resolve, reject) => {
-        // execute asynchronously
         setTimeout(() => {
           this.state === STATE.FULFILLED ? 
             getRealCb(onFulfilled, newPromise, resolve, reject)(this.value) : getRealCb(onRejected, newPromise, resolve, reject)(this.reason);
