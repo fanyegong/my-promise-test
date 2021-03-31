@@ -17,3 +17,4 @@ require('./tests/2.3.2');
 require('./tests/2.3.3');
 require('./tests/2.3.4');
 require('./tests/3.1.1');
+require('./tests/3.1.2');

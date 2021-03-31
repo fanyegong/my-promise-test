@@ -152,6 +152,35 @@ class PromiseNew {
   static reject(value) {
     return new this((resolve, reject) => reject(value));
   }
+
+  static all(promises) {
+    if (!promises[Symbol.iterator]) {
+      return this.reject(new TypeError(`${typeof promises} is not iterable(cannot read property Symbol(Symbol.iterator))`));
+    }
+    return new PromiseNew((resolve, reject) => {
+      let promiseSum = 0; // promises sum 
+      let resolveSum = 0; // resolved number
+      const resolveResult = []; // resolved result
+      for (const iterator of promises) {
+        const i = promiseSum; // current index
+        promiseSum += 1;
+        let curIteraotor = iterator;
+        // if iterator is not a promise, change it to promise by Promise.resolve
+        if (!(iterator instanceof this)) {
+          curIteraotor = this.resolve(iterator);
+        }
+        curIteraotor.then((value) => {
+          resolveResult[i] = value;
+          resolveSum += 1;
+          if (resolveSum === promiseSum) {
+            resolve(resolveResult);
+          }
+        }, (error) => {
+          reject(error);
+        });
+      }
+    });
+  }
 }
 
 module.exports = PromiseNew;

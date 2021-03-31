@@ -66,6 +66,8 @@
 //   return p;
 // });
 
+/////////////////////////以下需要自己写用例/////////////////////////////////////////////////
+
 // -------------------finally的onFinished回调取不到value或reason,也会返回新的promise, 透传之前的值，但是如果在onFinished里报错或者返回rejected promise, 新的promise会跟随新的reason -----------------------------------------
 // const Promise = require('./myPromise');
 // // undefined 44 55 3 22
@@ -102,20 +104,31 @@
 // })
 
 // -------------------Promise.resolve(p1)等价new Promise(resolve => resolve(p1)) 都应该等待p1完成，通过此问题检查出myPromise的实现漏洞 -----------------------------------------
+// const Promise = require('./myPromise');
+// let p1 = new Promise((resolve, reject) => {
+//   setTimeout(() => {
+//     resolve(1);
+//   }, 3000);
+// }); new Promise(resolve => resolve(p1)).then(()=>console.log(111))
+
+// let p2 = new Promise((resolve, reject) => {
+//   setTimeout(() => {
+//     resolve(1);
+//   }, 3000);
+// }); Promise.resolve(p2).then(()=>console.log(222))
+
+// -------------------Promise.all -----------------------------------------
 const Promise = require('./myPromise');
-let p1 = new Promise((resolve, reject) => {
-  setTimeout(() => {
-    resolve(1);
-  }, 3000);
-}); new Promise(resolve => resolve(p1)).then(()=>console.log(111))
-
-let p2 = new Promise((resolve, reject) => {
-  setTimeout(() => {
-    resolve(1);
-  }, 3000);
-}); Promise.resolve(p2).then(()=>console.log(222))
-
-
+var p1 = Promise.resolve(3);
+var p2 = 1337;
+var p3 = new Promise((resolve, reject) => {
+  setTimeout(resolve, 100, 'foo');
+});
+Promise.all([p1, p2, p3]).then(values => {
+  console.log(values); // [3, 1337, "foo"]
+}).catch((error)=>{
+  console.log(error)
+})
 
 
 // -------------------测试myPromise-----------------------------------------
