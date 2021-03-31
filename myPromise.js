@@ -71,6 +71,12 @@ class PromiseNew {
     this.resolveQueue = [];
     this.rejectQueue = [];
     const resolve = (value) => {
+      // if value is instanceof Promise, return a new Promise that will wait for value's status change 
+      if (value instanceof PromiseNew) {
+        return value.then(function (val) {
+          resolveByResult(this, val, resolve, reject);
+        }, reject);
+      }
       // When fulfilled or rejected must not transition to any other state.
       if (this.state !== STATE.PENDING) return;
       this.state = STATE.FULFILLED;
@@ -140,17 +146,10 @@ class PromiseNew {
   }
 
   static resolve(value) {
-    // 如果参数是 Promise 实例，那么Promise.resolve将不做任何修改、原封不动地返回这个实例。
-    if (value instanceof PromiseNew) {
-      return value; 
-    }
     return new this((resolve, reject) => resolve(value));
   }
 
   static reject(value) {
-    if (value instanceof PromiseNew) {
-      return value; 
-    }
     return new this((resolve, reject) => reject(value));
   }
 }
