@@ -1,10 +1,10 @@
 {
   "name": "my-promise-test",
   "version": "1.0.0",
-  "description": "1.测试集 https://github.com/promises-aplus/promises-tests/",
+  "description": "promise pollyfill",
   "main": "index.js",
   "scripts": {
-    "test": "promises-aplus-tests test.js",
+    "test": "node test.js",
     "test:local": "mocha testLocal.js"
   },
   "author": "",

@@ -1,4 +1,9 @@
-
+// https://github.com/promises-aplus/promises-spec
+/**
+ * tips: 1. 执行then的方法要异步并且注意try catch
+ *       2. 状态只能变更一次
+ *       3. then传参数不合法时需要透传
+ */
 const STATE = {
   'PENDING': 'pending',
   'FULFILLED': 'fullfilled',
@@ -109,7 +114,7 @@ class PromiseNew {
         setTimeout(() => {
           this.resolveQueue.push(getRealCb(onFulfilled, newPromise, resolve, reject));
           this.rejectQueue.push(getRealCb(onRejected, newPromise, resolve, reject));
-        }, 0); // 这里不加setTimeout时, newPromise是undefined
+        }, 0); // without setTimeout, newPromise is undefined
       });
     } else {
       return newPromise = new PromiseNew((resolve, reject) => {
@@ -120,6 +125,18 @@ class PromiseNew {
         }, 0);
       });
     }
+  }
+
+  catch(onRejected) {
+    return this.then(null, onRejected);
+  }
+
+  static resolve(value) {
+    return new this((resolve, reject) => resolve(value));
+  }
+
+  static reject(value) {
+    return new this((resolve, reject) => reject(value));
   }
 }
 
