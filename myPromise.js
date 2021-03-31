@@ -131,11 +131,26 @@ class PromiseNew {
     return this.then(null, onRejected);
   }
 
+  finally(onFinished) {
+    const P = this.constructor;
+    return this.then(
+      (value) => P.resolve(onFinished()).then(() => value),
+      (reason) => P.resolve(onFinished()).then(() => { throw reason }), 
+    );
+  }
+
   static resolve(value) {
+    // 如果参数是 Promise 实例，那么Promise.resolve将不做任何修改、原封不动地返回这个实例。
+    if (value instanceof PromiseNew) {
+      return value; 
+    }
     return new this((resolve, reject) => resolve(value));
   }
 
   static reject(value) {
+    if (value instanceof PromiseNew) {
+      return value; 
+    }
     return new this((resolve, reject) => reject(value));
   }
 }

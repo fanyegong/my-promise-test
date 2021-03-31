@@ -66,6 +66,41 @@
 //   return p;
 // });
 
+// -------------------finally的onFinished回调取不到value或reason,也会返回新的promise, 透传之前的值，但是如果在onFinished里报错或者返回rejected promise, 新的promise会跟随新的reason -----------------------------------------
+const Promise = require('./myPromise');
+// undefined 44 55 3 22
+let a = 2;
+const p = new Promise((resolve, reject) => {
+  setTimeout(() => {
+    a = 3;
+    resolve(1);
+  }, 3000);
+})
+
+Promise.resolve(22).finally((value) => {
+  console.log(value); // undefined ps:回调取不到value或reason
+  return p
+}).then((value) => {
+  console.log(a); // 3   ps: wait for p
+  console.log(value); // 22  ps: 透传value
+})
+
+Promise.resolve(22).finally(() => {
+  throw new Error(44)
+}).then((value) => {
+  console.log(value);
+},(err) => {
+  console.log(err.message); // 44 ps: 新的reason
+})
+
+Promise.reject(55).finally(() => {
+  return 66
+}).then((value) => {
+  console.log(value);
+},(err) => {
+  console.log(err); // 55 ps: 透传 reason
+})
+
 
 
 
